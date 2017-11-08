@@ -52,12 +52,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/:stringQuery', function(req, res) {
 	var stringQuery = req.params.stringQuery;
-	var test = {
-		unix: stringQuery,
-		natural: 'test123'
-	}
 	
-	console.log(Date.parse(stringQuery));
 	res.json(checkTimestamp(stringQuery));
 } )
 module.exports = router;

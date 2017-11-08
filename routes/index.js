@@ -1,7 +1,6 @@
 var express = require('express');
 var url = require("url");
 var router = express.Router();
-
 /*
 * @param stringQuery: the String passed in the url
 * 
@@ -12,11 +11,10 @@ var router = express.Router();
 * If the string is not formatted into a date, returns a null for the unix and natural times
 */
 function checkTimestamp(stringQuery) {
-	if(Date.parse(stringQuery)) {
-		return {	
-			"unix": Math.round( new Date(stringQuery) / 1000 ),
-			"natural": new Date(stringQuery)
-		}
+	if(Date.parse( stringQuery )) return getTimestamp(stringQuery);
+	else if(  Date.parse ( new Date( stringQuery * 1000 ) ) ) {
+		
+		return getNaturalDate(stringQuery);
 	} else {
 		return {
 		
@@ -26,10 +24,29 @@ function checkTimestamp(stringQuery) {
 		}
 	}
 }
+
+function getTimestamp( date ) {
+	var date = new Date(date);
+	return {	
+			"unix": Math.round( date / 1000 ),
+			"natural": formatDate(date.getMonth() + 1, date.getDate(), date.getFullYear())
+		}
+}
+
+function getNaturalDate( unixTimestamp ) {
+	var date = new Date(unixTimestamp * 1000);
+	
+	return {	
+			"unix": unixTimestamp,
+			"natural": formatDate((date.getMonth() + 1), date.getDate(), date.getFullYear())
+		}
+}
+
+function formatDate(month, day, year  ) {
+	return month +"/" + day +"/" +year;
+}
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var userStories = [ 'I can pass a string as a parameter, and it will check to see whether that string contains either a unix timestamp or a natural language date (example: January 1, 2016).',
-'If it does, it returns both the Unix timestamp and the natural language form of that date.','If it does not contain a date or Unix timestamp, it returns null for those properties.']
   res.render('index', { title: 'Timestamp Microservice', author: 'Andrew Berumen'});
 });
 
